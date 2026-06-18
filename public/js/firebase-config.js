@@ -10,12 +10,13 @@
 //   웹 앱이 없으면 "앱 추가 → 웹"으로 먼저 등록하세요.
 // ============================================================================
 export const firebaseConfig = {
-  apiKey: "REPLACE_WITH_WEB_API_KEY",
+  apiKey: "AIzaSyB15rtcXLy0inEpLdSOE792L5RgqrYIqxo",
   authDomain: "survival-e6d7b.firebaseapp.com",
   projectId: "survival-e6d7b",
-  storageBucket: "survival-e6d7b.appspot.com",
-  messagingSenderId: "REPLACE_WITH_SENDER_ID",
-  appId: "REPLACE_WITH_APP_ID",
+  storageBucket: "survival-e6d7b.firebasestorage.app",
+  messagingSenderId: "675462178844",
+  appId: "1:675462178844:web:6fd55a7fda46f1d11017d9",
+  measurementId: "G-QTQ6Y066BN",
 };
 
 // 위 값이 채워지면 자동으로 클라우드 기능(구글 로그인 + Firestore 기록)이 켜집니다.
