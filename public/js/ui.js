@@ -116,7 +116,7 @@ function renderSurvivors(state) {
     card.dataset.svId = sv.id;
     const traits = sv.traits.map(t => TRAIT_LABEL[t] || t).join(", ");
     const statHtml = ["strength", "agility", "intelligence", "hp", "mental", "charisma"]
-      .map(k => `${STAT_LABEL[k]} <b>${sv.stats[k]}</b>`).join(" · ");
+      .map(k => `<span>${STAT_LABEL[k]} <b>${sv.stats[k]}</b></span>`).join("");
     const assigned = Object.entries(state.assignments).filter(([, id]) => id === sv.id).map(([cid]) => cid);
     const cardChips = assigned.map(cid => {
       const c = state.cards.find(x => x.id === cid);

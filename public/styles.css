@@ -32,6 +32,8 @@ button:active { transform: translateY(1px); }
 
 .screen { display: none; height: 100vh; }
 .screen.active { display: flex; }
+/* 게임 화면은 헤더 / 본문 / 푸터가 세로로 쌓여야 한다 (핵심 레이아웃) */
+#game-screen.active { flex-direction: column; }
 
 /* ---------- 타이틀 ---------- */
 #title-screen {
@@ -126,7 +128,8 @@ button:active { transform: translateY(1px); }
 .sv-name { font-weight: 700; font-size: .92rem; }
 .sv-role { font-size: .7rem; background: #34404e; color: var(--accent-2); padding: 1px 7px; border-radius: 5px; }
 .sv-traits { font-size: .68rem; color: var(--muted); margin-left: auto; }
-.sv-stats { display: flex; flex-wrap: wrap; gap: 4px 10px; margin-top: 5px; font-size: .72rem; color: var(--muted); }
+.sv-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 3px 8px; margin-top: 6px; font-size: .72rem; color: var(--muted); }
+.sv-stats span { display: flex; justify-content: space-between; background: var(--panel); padding: 1px 6px; border-radius: 4px; }
 .sv-stats b { color: var(--text); }
 .sv-cond { display: flex; gap: 10px; margin-top: 5px; font-size: .72rem; }
 .cond-pip { display: flex; align-items: center; gap: 3px; }
@@ -143,9 +146,9 @@ button:active { transform: translateY(1px); }
 .field { margin-bottom: 11px; }
 .field-label { font-size: .74rem; color: var(--muted); margin-bottom: 5px; }
 .region-list { display: flex; flex-direction: column; gap: 5px; }
-.region-opt { display: flex; align-items: center; gap: 8px; padding: 7px 9px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
+.region-opt { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; padding: 8px 10px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; cursor: pointer; }
 .region-opt.sel { border-color: var(--accent); background: #2b3340; }
-.region-opt .r-name { font-size: .85rem; font-weight: 600; }
+.region-opt .r-name { font-size: .85rem; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
 .region-opt .r-danger { font-size: .68rem; margin-left: auto; padding: 1px 7px; border-radius: 5px; }
 .dz-low { background: #234a30; color: var(--good); } .dz-mid { background: #4a4322; color: var(--warn); } .dz-hi { background: #4a2622; color: var(--danger); }
 .region-opt .r-desc { font-size: .68rem; color: var(--muted); width: 100%; margin-top: 2px; }
