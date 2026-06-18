@@ -72,12 +72,13 @@ npx firebase deploy --only hosting --project <YOUR_PROJECT_ID>
 
 ### 3) GitHub Actions 자동 배포 (push 시 자동)
 
-`.github/workflows/firebase-hosting.yml` 이 `main`/`master` push 또는 수동 실행 시 배포합니다. 저장소에 아래 두 가지만 등록하세요:
+`.github/workflows/firebase-hosting.yml` 이 `main`/`master` push 또는 수동 실행 시 배포합니다. 프로젝트 ID(`survival-e6d7b`)는 워크플로우에 이미 지정되어 있으므로, 저장소에 **Secret 하나만** 등록하면 됩니다:
 
 | 종류 | 이름 | 값 |
 |------|------|----|
 | **Secret** | `FIREBASE_SERVICE_ACCOUNT` | Firebase 서비스 계정 키 **JSON 전체** |
-| **Variable** | `FIREBASE_PROJECT_ID` | Firebase 프로젝트 ID |
+
+> 🔐 서비스 계정 키는 **절대 저장소에 커밋하지 마세요.** 오직 GitHub Secrets에만 보관합니다.
 
 서비스 계정 키 발급:
 - Firebase 콘솔 → 프로젝트 설정 → **서비스 계정** → "새 비공개 키 생성" → 받은 JSON 내용 전체를 위 Secret에 붙여넣기

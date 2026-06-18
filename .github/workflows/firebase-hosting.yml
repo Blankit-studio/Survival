@@ -1,8 +1,7 @@
 # Firebase Hosting 자동 배포
-# private 저장소에서도 동작합니다. 아래 두 가지만 설정하면 됩니다:
-#   1) 저장소 Secrets:   FIREBASE_SERVICE_ACCOUNT  (Firebase 서비스 계정 JSON 전체)
-#   2) 저장소 Variables: FIREBASE_PROJECT_ID       (Firebase 프로젝트 ID)
-# 설정 방법은 README.md 의 "배포" 섹션 참고.
+# private 저장소에서도 동작합니다. 저장소 Secret 하나만 설정하면 됩니다:
+#   Secret:  FIREBASE_SERVICE_ACCOUNT  (Firebase 서비스 계정 키 JSON 전체)
+# 프로젝트 ID(survival-e6d7b)는 공개 안전값이라 아래에 직접 지정했습니다.
 
 name: Deploy to Firebase Hosting
 
@@ -25,5 +24,5 @@ jobs:
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
-          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          projectId: survival-e6d7b
           channelId: live
