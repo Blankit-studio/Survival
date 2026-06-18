@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0d1014" />
+  <title>아포칼립스 캠프 생존</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <!-- 타이틀 -->
+  <section id="title-screen" class="screen active">
+    <div class="title-box">
+      <h1>아포칼립스 캠프<br /><span>생존</span></h1>
+      <p class="tagline">탐사로 얻고, 파밍으로 욕심내고, 쉘터 방어로 대가를 치른다.</p>
+      <div class="title-buttons">
+        <button id="btn-new" class="btn-primary">새 게임</button>
+        <button id="btn-continue" class="btn-ghost">이어하기</button>
+      </div>
+      <p class="hint">하루 3장의 타로 카드로 위험과 보상을 조정하며 캠프를 유지하세요.</p>
+    </div>
+  </section>
+
+  <!-- 게임 화면 -->
+  <section id="game-screen" class="screen">
+    <header class="topbar">
+      <div class="day-info">
+        <span class="day-num" id="day-num">DAY 1</span>
+        <span class="phase-tag" id="phase-tag">배치 단계</span>
+      </div>
+      <div class="resources" id="resource-bar"></div>
+      <div class="topbar-actions">
+        <button id="btn-save" class="btn-mini" title="저장">💾</button>
+        <button id="btn-menu" class="btn-mini" title="메뉴">≡</button>
+      </div>
+    </header>
+
+    <main class="layout">
+      <!-- 좌: 캠프 대시보드 -->
+      <div class="col col-left">
+        <div class="panel" id="panel-threat"></div>
+        <div class="panel" id="panel-facilities"></div>
+      </div>
+
+      <!-- 중: 생존자 + 카드 배정 -->
+      <div class="col col-center">
+        <div class="panel" id="panel-tarot"></div>
+        <div class="panel" id="panel-survivors"></div>
+      </div>
+
+      <!-- 우: 탐사 준비 -->
+      <div class="col col-right">
+        <div class="panel" id="panel-expedition"></div>
+        <div class="panel" id="panel-history"></div>
+      </div>
+    </main>
+
+    <footer class="actionbar">
+      <div class="action-hint" id="action-hint">카드를 생존자에게 배정하고 탐사팀을 편성하세요.</div>
+      <button id="btn-run" class="btn-primary btn-run">하루 실행 ▶</button>
+    </footer>
+  </section>
+
+  <!-- 리포트 모달 -->
+  <div id="report-modal" class="modal">
+    <div class="modal-box report-box">
+      <h2 id="report-title">DAY 1 REPORT</h2>
+      <div id="report-body"></div>
+      <button id="btn-report-close" class="btn-primary">다음 날로 ▶</button>
+    </div>
+  </div>
+
+  <!-- 게임오버 모달 -->
+  <div id="over-modal" class="modal">
+    <div class="modal-box">
+      <h2 id="over-title">캠프 붕괴</h2>
+      <p id="over-body"></p>
+      <button id="btn-over-restart" class="btn-primary">다시 시작</button>
+    </div>
+  </div>
+
+  <!-- 메뉴 모달 -->
+  <div id="menu-modal" class="modal">
+    <div class="modal-box">
+      <h2>메뉴</h2>
+      <div class="menu-actions">
+        <button id="btn-menu-save" class="btn-ghost">저장</button>
+        <button id="btn-menu-help" class="btn-ghost">도움말 / 규칙</button>
+        <button id="btn-menu-quit" class="btn-ghost">타이틀로</button>
+        <button id="btn-menu-close" class="btn-primary">닫기</button>
+      </div>
+      <div id="help-box" class="help-box" hidden></div>
+    </div>
+  </div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

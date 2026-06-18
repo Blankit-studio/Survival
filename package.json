@@ -1,0 +1,17 @@
+{
+  "name": "apocalypse-camp-survival",
+  "version": "0.1.0",
+  "private": true,
+  "description": "아포칼립스 캠프 생존 — 탐사/파밍/쉘터 보호 중심의 생존 경영 게임 (MVP)",
+  "type": "module",
+  "scripts": {
+    "dev": "npx --yes serve public -l 5173",
+    "start": "npx --yes serve public -l 5173",
+    "test": "node test/smoke.test.js",
+    "deploy": "firebase deploy --only hosting",
+    "emulate": "firebase emulators:start --only hosting"
+  },
+  "devDependencies": {
+    "firebase-tools": "^13.0.0"
+  }
+}

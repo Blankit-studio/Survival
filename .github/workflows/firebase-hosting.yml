@@ -1,0 +1,29 @@
+# Firebase Hosting 자동 배포
+# private 저장소에서도 동작합니다. 아래 두 가지만 설정하면 됩니다:
+#   1) 저장소 Secrets:   FIREBASE_SERVICE_ACCOUNT  (Firebase 서비스 계정 JSON 전체)
+#   2) 저장소 Variables: FIREBASE_PROJECT_ID       (Firebase 프로젝트 ID)
+# 설정 방법은 README.md 의 "배포" 섹션 참고.
+
+name: Deploy to Firebase Hosting
+
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch: {}   # 액션 탭에서 수동 실행 가능
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Firebase Hosting (live)
+        uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: ${{ secrets.GITHUB_TOKEN }}
+          firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          projectId: ${{ vars.FIREBASE_PROJECT_ID }}
+          channelId: live
