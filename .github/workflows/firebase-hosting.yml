@@ -7,7 +7,7 @@ name: Deploy to Firebase Hosting
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master, "claude/vibrant-lamport-utpfip"]
   workflow_dispatch: {}   # 액션 탭에서 수동 실행 가능
 
 permissions:
