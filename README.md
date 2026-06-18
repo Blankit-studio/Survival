@@ -90,6 +90,39 @@ PR을 열면 `firebase-preview.yml` 이 임시 미리보기 URL을 코멘트로 
 
 ---
 
+## 로그인 & 클라우드 기록 (Firebase Auth + Firestore)
+
+구글 로그인(선택) 시 **진행 상황이 클라우드에 자동 저장**되어 어느 기기에서든 이어할 수 있고, **완료된 게임 기록**(생존 일수·결과)이 남습니다. 로그인하지 않으면 기존처럼 브라우저 `localStorage`로 오프라인 플레이됩니다. 설정이 안 되어 있으면 자동으로 오프라인 모드로 동작합니다.
+
+설정에 필요한 콘솔 작업(한 번만):
+
+### 1) 웹 앱 등록 + 설정값 입력
+Firebase 콘솔 → 프로젝트 설정 → 일반 → **내 앱 → 웹 앱 추가** → "SDK 설정 및 구성"의 **Config** 객체를 복사해 `public/js/firebase-config.js`의 `firebaseConfig`에 붙여넣습니다.
+
+> 🔓 이 값(`apiKey` 등)은 **비밀이 아닙니다.** Firebase 웹 API 키는 클라이언트에 노출되는 게 정상이며, 보안은 아래 Firestore 규칙 + Auth 승인 도메인으로 강제됩니다. (서비스 계정 키와 다름)
+
+### 2) 구글 로그인 활성화
+콘솔 → **Authentication → Sign-in method → Google → 사용 설정** (지원 이메일 지정).
+→ **승인된 도메인**에 `survival-e6d7b.web.app`, `survival-e6d7b.firebaseapp.com`, `localhost`가 포함되어 있는지 확인 (보통 자동 등록).
+
+### 3) Firestore 생성 + 보안 규칙 배포
+콘솔 → **Firestore Database → 데이터베이스 만들기**(프로덕션 모드).
+보안 규칙은 저장소의 `firestore.rules`에 들어 있습니다 (각 사용자는 자기 데이터만 접근):
+
+```bash
+npx firebase deploy --only firestore:rules --project survival-e6d7b
+```
+
+### 데이터 구조
+
+```
+users/{uid}                      프로필 { displayName, email, photoURL, bestDays, totalRuns }
+users/{uid}/saves/current        현재 게임 클라우드 세이브 { state, day, updatedAt }
+users/{uid}/runs/{autoId}        완료 기록 { daysSurvived, result, survivors, endedAt }
+```
+
+---
+
 ## 프로젝트 구조
 
 ```
@@ -100,11 +133,15 @@ public/
   js/
     data.js           콘텐츠·밸런싱 테이블 (생존자·타로12·지역5·이벤트20·위협5·시설6, GDD §16.1 데이터 기반)
     engine.js         게임 상태 + 매니저 + 판정 공식 + 저장 (GDD §4.3, §6.4, §8.2)
-    ui.js             렌더링 + 드래그앤드롭 카드 배정 + 리포트
-    main.js           컨트롤러 (하루 루프 흐름, UI ↔ 엔진 연결)
+    ui.js             렌더링 + 드래그앤드롭 카드 배정 + 리포트 + 인증/기록 UI
+    main.js           컨트롤러 (하루 루프 흐름, UI ↔ 엔진 ↔ 클라우드 연결)
+    cloud.js          Firebase Auth(구글 로그인) + Firestore(세이브/기록) 래퍼
+    firebase-config.js  Firebase 웹 설정 (콘솔 Config 붙여넣기)
 test/
-  smoke.test.js       엔진 자동 플레이 검증
-firebase.json .firebaserc           Firebase Hosting 설정
+  smoke.test.js          엔진 자동 플레이 검증
+  ui.integration.test.js jsdom 브라우저 흐름 검증
+firebase.json .firebaserc           Firebase Hosting + Firestore 설정
+firestore.rules firestore.indexes.json  Firestore 보안 규칙 / 인덱스
 .github/workflows/    자동 배포 / PR 미리보기
 ```
 

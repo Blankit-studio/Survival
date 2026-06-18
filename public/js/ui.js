@@ -342,6 +342,79 @@ export function showScreen(id) {
   $("#" + id).classList.add("active");
 }
 
+// ---------------------------------------------------------------------------
+// 인증 UI (구글 로그인) — 상단바 칩 + 타이틀 영역
+// authState: { enabled, user, profile }
+// ---------------------------------------------------------------------------
+const GOOGLE_LOGO = `<svg class="g-logo" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>`;
+
+export function renderAuth(authState) {
+  const chip = $("#auth-chip");
+  const titleAuth = $("#title-auth");
+  const recBtn = $("#btn-records");
+  if (!authState.enabled) {
+    // 클라우드 미설정/비활성 → 인증 UI 숨김, 오프라인 안내
+    chip.innerHTML = "";
+    if (recBtn) recBtn.style.display = "none";
+    titleAuth.innerHTML = `<span class="cloud-note">오프라인 모드 — 진행은 이 브라우저에 저장됩니다.</span>`;
+    return;
+  }
+  if (recBtn) recBtn.style.display = "";
+  const u = authState.user;
+  if (u) {
+    const best = authState.profile && authState.profile.bestDays ? `최고 ${authState.profile.bestDays}일` : "";
+    const avatar = u.photoURL ? `<img src="${u.photoURL}" alt="" referrerpolicy="no-referrer" />` : "";
+    chip.innerHTML = `${avatar}<span class="au-name">${u.displayName || u.email || "플레이어"}</span>
+      ${best ? `<span class="au-best">${best}</span>` : ""}
+      <button class="btn-mini au-out" id="au-signout">로그아웃</button>`;
+    chip.querySelector("#au-signout").onclick = () => H.signOut();
+    titleAuth.innerHTML = `<div class="au-signed">${avatar}<span>${u.displayName || u.email}님 — 클라우드 동기화 켜짐</span></div>
+      <button class="btn-mini au-out" id="au-signout2">로그아웃</button>`;
+    titleAuth.querySelector("#au-signout2").onclick = () => H.signOut();
+  } else {
+    chip.innerHTML = `<button class="btn-google" id="au-signin-mini">${GOOGLE_LOGO}로그인</button>`;
+    chip.querySelector("#au-signin-mini").onclick = () => H.signIn();
+    titleAuth.innerHTML = `<button class="btn-google" id="au-signin">${GOOGLE_LOGO}Google로 로그인</button>
+      <span class="cloud-note">로그인하면 진행과 기록이 클라우드에 저장됩니다 (선택).</span>`;
+    titleAuth.querySelector("#au-signin").onclick = () => H.signIn();
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 기록 모달
+// ---------------------------------------------------------------------------
+export function showRecords(state) {
+  const body = $("#records-body");
+  if (state.loading) { body.innerHTML = `<div class="rec-empty">불러오는 중…</div>`; }
+  else if (!state.enabled) { body.innerHTML = `<div class="rec-empty">클라우드 기록은 로그인 시 사용할 수 있습니다.</div>`; }
+  else if (!state.user) { body.innerHTML = `<div class="rec-empty">Google 로그인 후 기록이 저장됩니다.</div>`; }
+  else {
+    const runs = state.runs || [];
+    const best = state.profile?.bestDays || (runs.length ? Math.max(...runs.map(r => r.daysSurvived || 0)) : 0);
+    const total = state.profile?.totalRuns ?? runs.length;
+    let html = `<div class="rec-summary">
+      <div class="rec-stat"><div class="v">${best}</div><div class="l">최고 생존일</div></div>
+      <div class="rec-stat"><div class="v">${total}</div><div class="l">총 플레이</div></div>
+    </div>`;
+    if (!runs.length) html += `<div class="rec-empty">아직 완료된 게임 기록이 없습니다.</div>`;
+    else {
+      for (const r of runs) {
+        const date = r.endedAt && r.endedAt.seconds
+          ? new Date(r.endedAt.seconds * 1000).toLocaleDateString("ko-KR") : "";
+        const res = r.result === "over" ? "캠프 붕괴" : "진행 중";
+        html += `<div class="rec-row">
+          <span class="rec-day">${r.daysSurvived || 0}일</span>
+          <span class="rec-res">${res} · 생존자 ${r.survivors ?? 0}명</span>
+          <span class="rec-date">${date}</span>
+        </div>`;
+      }
+    }
+    body.innerHTML = html;
+  }
+  $("#records-modal").classList.add("active");
+}
+export function hideRecords() { $("#records-modal").classList.remove("active"); }
+
 export function toast(msg) {
   const hint = $("#action-hint");
   const prev = hint.textContent;

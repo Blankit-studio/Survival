@@ -1,0 +1,15 @@
+rules_version = '2';
+
+// 각 사용자는 오직 자신의 데이터(users/{uid} 하위 전체)만 읽고 쓸 수 있다.
+// 로그인하지 않으면 어떤 접근도 불가. (게스트는 로컬 localStorage만 사용)
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == uid;
+      }
+    }
+  }
+}
