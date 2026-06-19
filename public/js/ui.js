@@ -124,7 +124,8 @@ function renderTarot(state) {
 
 function renderSurvivors(state) {
   const p = $("#panel-survivors");
-  p.innerHTML = `<h3>생존자 <span class="sub">탐사팀 = 밤 방어 약화</span></h3>`;
+  const count = aliveSurvivors(state).length;
+  p.innerHTML = `<h3>생존자 ${count}명 <span class="sub">탐사팀 = 밤 방어 약화</span></h3>`;
   const list = el("div", "sv-list");
   const onTeam = new Set(state.plan.team);
   for (const sv of state.survivors) {
@@ -300,6 +301,7 @@ export function showReport(state, report) {
       .map(([k, v]) => `<span>${RESOURCE_LABEL[k] || k} +${v}</span>`).join("");
     const gl = el("div", "rep-line"); gl.innerHTML = `획득: <span class="rep-gain">${gains || "<span>—</span>"}</span>`;
     sec.appendChild(gl);
+    if (e.recruited) sec.appendChild(line(`🙋 ${e.recruited}이(가) 캠프에 합류했다! (사기 +6)`, "good"));
     if (e.injuries.length) for (const inj of e.injuries) sec.appendChild(line(inj, "danger"));
     sec.appendChild(line(`소음 ${e.noise} · 부상확률 ${e.injuryChance}% · 귀환위험 ${e.returnRisk}%`));
     body.appendChild(sec);

@@ -2,6 +2,7 @@
 // localStorage 미사용 경로만 호출하므로 브라우저 없이 동작.
 import {
   newGame, startDay, runDay, previewExpedition, aliveSurvivors, convertCardForSurvivor,
+  remainingRecruits,
 } from "../public/js/engine.js";
 
 let failures = 0;
@@ -26,6 +27,12 @@ function autoPlan(state) {
 console.log("▶ 25일 자동 플레이 스모크 테스트");
 const state = newGame();
 startDay(state);
+
+// 시작 구성: 생존자 3명 + 합류 풀 4명
+assert(aliveSurvivors(state).length === 3, `시작 생존자 3명 (현재 ${aliveSurvivors(state).length})`);
+assert(remainingRecruits(state) === 4, `합류 풀 4명 (현재 ${remainingRecruits(state)})`);
+const TOTAL = state.survivors.length + remainingRecruits(state);
+assert(TOTAL === 7, `총원 7명 보존`);
 
 let lastDay = 0;
 for (let i = 0; i < 25 && !state.gameOver; i++) {
@@ -53,6 +60,9 @@ for (let i = 0; i < 25 && !state.gameOver; i++) {
   for (const [k, f] of Object.entries(state.facilities)) {
     assert(f.durability >= 0 && f.durability <= 100, `시설 ${k} 내구도 범위 (${f.durability})`);
   }
+
+  // 인원 보존: (현재 생존자 수, 사망 포함) + 합류 풀 == 7 이하, 풀은 줄기만 함
+  assert(state.survivors.length + remainingRecruits(state) === 7, `day${report.day} 총원 7명 보존 (${state.survivors.length}+${remainingRecruits(state)})`);
 
   lastDay = report.day;
   if (!state.gameOver) startDay(state);

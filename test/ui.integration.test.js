@@ -43,7 +43,7 @@ ok($("#day-num").textContent.includes("DAY 1"), "DAY 1 표시");
 const cards = document.querySelectorAll(".tcard");
 ok(cards.length === 3, `타로 카드 3장 렌더 (${cards.length})`);
 const svCards = document.querySelectorAll(".sv-card");
-ok(svCards.length >= 5, `생존자 카드 렌더 (${svCards.length})`);
+ok(svCards.length === 3, `시작 생존자 3명 렌더 (${svCards.length})`);
 ok($("#resource-bar").children.length === 8, "자원 칩 8종 표시");
 ok(document.querySelectorAll(".fac-row").length === 7, "시설 7종 표시");
 

@@ -102,6 +102,10 @@ export const SURVIVORS = [
     traits: ["brave", "hothead"] },
 ];
 
+// 시작 멤버 3명 — 정찰/치료/전투의 균형 잡힌 초기 구성.
+// 나머지는 합류 풀에 들어가 탐사 이벤트로 합류한다.
+export const STARTING_SURVIVOR_IDS = ["sv_joon", "sv_mina", "sv_tae"];
+
 // ---------------------------------------------------------------------------
 // 타로 카드 12장 (GDD 7.4) — channel 값은 % 또는 수치 보정의 기준값
 //   effects: 이로운 채널, drawbacks: 비용 채널(noise/fatigue/risk)
@@ -214,6 +218,8 @@ export const EXPED_EVENTS = [
     apply: c => { c.lootBonus += 8; c.noise += 4; return "강제 개방해 추가 자원을 챙겼다 (소음↑)."; } },
   { id: "e_trace", region: "suburb", text: "다른 생존자의 흔적.",
     apply: c => { c.intel += 4; return "흔적을 따라 정보를 얻었다 (정보 +4)."; } },
+  { id: "e_holdout", region: "suburb", text: "지하실에 숨어있던 생존자를 발견했다.",
+    apply: c => { c.recruit = true; return "경계하던 생존자가 합류를 결심했다."; } },
   { id: "e_stolen", region: "suburb", text: "이미 털린 집.",
     apply: c => { c.lootBonus -= 6; return "남은 게 거의 없다 (보상↓)."; } },
   { id: "e_fridge", region: "market", text: "냉장고가 요란한 소리를 냈다.",
@@ -227,7 +233,7 @@ export const EXPED_EVENTS = [
   { id: "e_surgery", region: "hospital", text: "잠긴 수술실.",
     apply: c => { c.lootBonus += 12; c.noise += 6; return "장비로 문을 열어 약품을 대량 확보 (소음↑)."; } },
   { id: "e_rescue", region: "hospital", text: "부상자가 구조를 요청한다.",
-    apply: c => { c.morale += 6; c.fatigue += 8; return "구조에 성공해 사기가 올랐다 (피로↑)."; } },
+    apply: c => { c.fatigue += 8; c.recruit = true; return "구조에 성공해 함께 캠프로 향한다 (피로↑)."; } },
   { id: "e_ambush", region: "checkpoint", text: "레이더가 매복하고 있다!",
     apply: c => { c.risk += 16; c.combatNeed += 10; return "교전 끝에 돌파했다 (위험↑)."; } },
   { id: "e_mine", region: "checkpoint", text: "지뢰밭을 발견했다.",
@@ -248,6 +254,8 @@ export const EXPED_EVENTS = [
     apply: c => { c.returnRisk += 8; c.noise -= 4; return "비가 소리를 가렸지만 귀환이 느려졌다."; } },
   { id: "e_survivor", region: "any", text: "겁먹은 생존자가 정보를 판다.",
     apply: c => { c.intel += 6; c.lootBonus -= 4; return "약간의 물자로 정보를 샀다."; } },
+  { id: "e_wanderer", region: "any", text: "지친 방랑자가 도움을 청한다.",
+    apply: c => { c.recruit = true; c.fatigue += 4; return "방랑자를 캠프로 데려가기로 했다."; } },
   { id: "e_quiet", region: "any", text: "이상하리만치 조용하다.",
     apply: c => { c.noise -= 6; c.lootBonus += 4; return "방해 없이 알뜰히 수색했다."; } },
 ];

@@ -3,7 +3,7 @@
 // 클라이언트 단일 판정(MVP). PvP 확장 시 서버 권한으로 이전 (GDD 10.3).
 // ============================================================================
 import {
-  SURVIVORS, TAROT, REGIONS, REGION_ROLE_BONUS, DEPTHS, EXPED_EVENTS,
+  SURVIVORS, STARTING_SURVIVOR_IDS, TAROT, REGIONS, REGION_ROLE_BONUS, DEPTHS, EXPED_EVENTS,
   THREAT_EVENTS, FACILITIES, START_RESOURCES, STORAGE_CAP, TUNING,
   ROLE_MULTIPLIER, TRAIT_MULTIPLIER, TRAIT_RISK_MULTIPLIER, CHANNEL_STAT,
 } from "./data.js";
@@ -13,6 +13,7 @@ const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const rand = () => Math.random();
 const pick = arr => arr[Math.floor(rand() * arr.length)];
 const round1 = v => Math.round(v * 10) / 10;
+const shuffle = arr => { const a = [...arr]; for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
 
 // ---------------------------------------------------------------------------
 // 타로 변환 필터 (GDD 7.3, 8.2)
@@ -75,16 +76,20 @@ function cardChannelTotals(card, sv) {
 // 게임 상태
 // ---------------------------------------------------------------------------
 export function newGame() {
+  const mkSurvivor = s => ({
+    ...s, stats: { ...s.stats }, traits: [...s.traits],
+    condition: { injury: 0, fatigue: 10, infection: 0 },
+    alive: true,
+  });
+  const starters = new Set(STARTING_SURVIVOR_IDS);
   return {
     day: 1,
     gameOver: false,
     victory: false,
     resources: { ...START_RESOURCES },
-    survivors: SURVIVORS.map(s => ({
-      ...s, stats: { ...s.stats }, traits: [...s.traits],
-      condition: { injury: 0, fatigue: 10, infection: 0 },
-      alive: true,
-    })),
+    // 초반 3명으로 시작, 나머지는 합류 풀(탐사 이벤트로 합류)
+    survivors: SURVIVORS.filter(s => starters.has(s.id)).map(mkSurvivor),
+    recruitPool: shuffle(SURVIVORS.filter(s => !starters.has(s.id))).map(mkSurvivor),
     facilities: Object.fromEntries(
       Object.entries(FACILITIES).map(([k, v]) => [k, { durability: v.durability }])
     ),
@@ -103,6 +108,22 @@ export function newGame() {
 
 export function aliveSurvivors(state) {
   return state.survivors.filter(s => s.alive);
+}
+
+// 합류 풀에서 한 명을 캠프에 합류시킨다 (새 멤버는 지친 상태로 도착).
+function recruitSurvivor(state) {
+  if (!state.recruitPool || !state.recruitPool.length) return null;
+  const sv = state.recruitPool.shift();
+  sv.condition = { injury: 8, fatigue: 25, infection: 0 };
+  sv.alive = true;
+  state.survivors.push(sv);
+  state.resources.morale = clamp(round1(state.resources.morale + 6), 0, 100);
+  return sv;
+}
+
+// 남은 합류 가능 인원 수
+export function remainingRecruits(state) {
+  return state.recruitPool ? state.recruitPool.length : 0;
 }
 
 // 아침 정산 (GDD 2.1) + 카드 지급
@@ -289,11 +310,16 @@ export function runDay(state) {
     const ctx = {
       lootBonus: 0, noise: 0, risk: 0, fatigue: 0, intel: 0, morale: 0,
       injuryRisk: 0, infectionRisk: 0, returnRisk: 0, time: 0, combatNeed: 0,
+      recruit: false,
     };
     // 이벤트 (지역 풀 + 공통)
     const pool = EXPED_EVENTS.filter(e => e.region === region.id || e.region === "any");
     const ev = pick(pool);
     const evResult = ev.apply(ctx);
+
+    // 합류 이벤트 처리 (합류 풀에 남은 인원이 있을 때만)
+    let recruited = null;
+    if (ctx.recruit) recruited = recruitSurvivor(state);
 
     // 최종 수치 (미리보기 + 이벤트 보정)
     const varianceRoll = 1 + (preview.variance / 100) * (rand() * 2 - 1);
@@ -337,6 +363,7 @@ export function runDay(state) {
       region: region.name, depth: preview.depth.name, team: preview.team.map(s => s.name),
       event: { text: ev.text, result: evResult }, gained, injuries,
       noise: state.lastNoise, injuryChance: round1(injuryChance), returnRisk: round1(returnRisk),
+      recruited: recruited ? recruited.name : null,
     };
   } else {
     state.lastNoise = 0;
