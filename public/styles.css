@@ -130,21 +130,45 @@ button:active { transform: translateY(1px); }
 .fac-fix:disabled { opacity: .4; cursor: default; }
 
 /* ---------- 타로 패널 ---------- */
-.tarot-cards { display: flex; gap: 8px; }
+.tarot-cards { display: flex; gap: 9px; }
 .tcard {
-  flex: 1; background: linear-gradient(160deg, #2a3340, #1d2530); border: 1px solid var(--line);
-  border-radius: 9px; padding: 9px 8px; cursor: grab; position: relative; min-height: 96px;
-  display: flex; flex-direction: column; gap: 3px; transition: .12s;
+  flex: 1; cursor: grab; position: relative; min-height: 150px;
+  border-radius: 11px; transition: transform .15s, box-shadow .15s, filter .15s;
+  animation: cardDraw .45s cubic-bezier(.2,.8,.25,1) backwards;
+  perspective: 600px;
 }
-.tcard:hover { border-color: var(--accent); transform: translateY(-2px); }
-.tcard.assigned { opacity: .55; border-style: dashed; }
-.tcard.dragging { opacity: .4; }
-.tcard .tc-name { font-size: .8rem; font-weight: 700; color: var(--accent); }
-.tcard .tc-kr { font-size: .68rem; color: var(--muted); }
-.tcard .tc-tags { display: flex; flex-wrap: wrap; gap: 3px; margin-top: auto; }
-.tc-tag { font-size: .6rem; background: #313c49; color: var(--accent-2); padding: 1px 5px; border-radius: 4px; }
-.tcard .tc-assignee { font-size: .68rem; color: var(--good); margin-top: 3px; }
-.tarot-help { font-size: .74rem; color: var(--muted); margin-top: 8px; }
+.tcard:nth-child(2) { animation-delay: .08s; }
+.tcard:nth-child(3) { animation-delay: .16s; }
+@keyframes cardDraw { from { opacity: 0; transform: translateY(14px) rotateX(35deg); } to { opacity: 1; transform: none; } }
+.tc-frame {
+  height: 100%; border-radius: 11px; padding: 9px 7px 8px; text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  background:
+    radial-gradient(circle at 50% 26%, rgba(224,164,88,.16), transparent 55%),
+    linear-gradient(165deg, #2b2540 0%, #1c1b2c 60%, #15131f 100%);
+  border: 1px solid #4a4366;
+  box-shadow: inset 0 0 0 1px rgba(224,164,88,.18), inset 0 0 22px rgba(0,0,0,.5);
+  position: relative; overflow: hidden;
+}
+.tc-frame::before {
+  content: ""; position: absolute; inset: 4px; border-radius: 8px;
+  border: 1px solid rgba(224,164,88,.25); pointer-events: none;
+}
+.tcard:hover { transform: translateY(-5px) scale(1.02); z-index: 3; }
+.tcard:hover .tc-frame { box-shadow: 0 8px 22px rgba(0,0,0,.5), inset 0 0 0 1px rgba(224,164,88,.5), 0 0 18px rgba(224,164,88,.25); border-color: var(--accent); }
+.tcard.assigned { filter: grayscale(.4) brightness(.8); }
+.tcard.assigned .tc-frame { border-style: dashed; }
+.tcard.dragging { opacity: .35; }
+.tc-top { display: flex; justify-content: space-between; width: 100%; padding: 0 3px; }
+.tc-num { font-size: .6rem; color: var(--accent); font-weight: 700; letter-spacing: 1px; opacity: .8; font-family: "Times New Roman", serif; }
+.tc-symbol { font-size: 1.8rem; line-height: 1.5; filter: drop-shadow(0 1px 3px rgba(0,0,0,.5)); }
+.tc-name { font-size: .76rem; font-weight: 700; color: var(--accent); font-family: "Times New Roman", serif; letter-spacing: .3px; }
+.tc-kr { font-size: .64rem; color: #b6a9d6; }
+.tc-desc { font-size: .6rem; color: var(--muted); line-height: 1.25; margin-top: 2px; }
+.tc-tags { display: flex; flex-wrap: wrap; gap: 3px; justify-content: center; margin-top: auto; padding-top: 4px; }
+.tc-tag { font-size: .58rem; background: rgba(111,177,201,.16); color: var(--accent-2); padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(111,177,201,.25); }
+.tcard .tc-assignee { font-size: .66rem; color: var(--good); margin-top: auto; padding-top: 4px; font-weight: 600; }
+.tarot-help { font-size: .74rem; color: var(--muted); margin-top: 10px; text-align: center; }
 
 /* ---------- 생존자 ---------- */
 .sv-list { display: flex; flex-direction: column; gap: 7px; }
@@ -240,6 +264,91 @@ button:active { transform: translateY(1px); }
 .col::-webkit-scrollbar, .modal-box::-webkit-scrollbar { width: 7px; }
 .col::-webkit-scrollbar-thumb, .modal-box::-webkit-scrollbar-thumb { background: #313c49; border-radius: 4px; }
 
+/* ============================================================================
+   시각 디자인 — 분위기 배경, 아이콘, 아바타, 애니메이션
+   ============================================================================ */
+
+/* 배경: 황혼 그라데이션 + 비네팅 + 미세 그레인 */
+body {
+  background:
+    radial-gradient(120% 80% at 50% -10%, #20212e 0%, #14151d 45%, var(--bg) 100%);
+  background-attachment: fixed;
+}
+body::after {
+  content: ""; position: fixed; inset: 0; z-index: 9999; pointer-events: none;
+  opacity: .04; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+#title-screen::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(circle at 50% 38%, rgba(224,164,88,.10), transparent 45%);
+}
+.title-box h1 { text-shadow: 0 2px 18px rgba(224,164,88,.25); }
+.title-box::before {
+  content: "☣"; position: absolute; top: -64px; left: 50%; transform: translateX(-50%);
+  font-size: 3rem; color: var(--accent); opacity: .22; filter: drop-shadow(0 0 12px rgba(224,164,88,.4));
+}
+.title-box { position: relative; }
+
+/* 화면/패널 진입 애니메이션 */
+#game-screen.active .panel { animation: panelIn .4s ease backwards; }
+.col-left .panel:nth-child(2) { animation-delay: .05s; }
+.col-center .panel:nth-child(2) { animation-delay: .08s; }
+.col-right .panel:nth-child(1) { animation-delay: .04s; }
+.col-right .panel:nth-child(2) { animation-delay: .1s; }
+@keyframes panelIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.panel { transition: border-color .15s, box-shadow .15s; }
+.panel:hover { border-color: #3a4655; }
+
+/* 자원 칩 아이콘 + 부족 시 깜빡임 */
+.res-chip { transition: background .15s; }
+.res-chip .res-ico { font-size: .9rem; line-height: 1; }
+.res-chip.low { animation: pulseLow 1.4s ease-in-out infinite; border-color: var(--danger); }
+@keyframes pulseLow { 0%,100% { background: var(--panel); } 50% { background: #3a2326; } }
+
+/* 시설 아이콘 */
+.fac-ico { width: 18px; text-align: center; font-size: .95rem; }
+.fac-bar i { transition: width .35s ease; background-image: linear-gradient(90deg, rgba(255,255,255,.12), transparent); }
+
+/* 생존자 아바타 */
+.sv-avatar {
+  position: relative; width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: .95rem; color: #fff; border: 2px solid;
+  box-shadow: 0 1px 4px rgba(0,0,0,.4); text-transform: uppercase;
+}
+.sv-rolebadge {
+  position: absolute; bottom: -4px; right: -5px; width: 16px; height: 16px;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: .6rem;
+}
+.sv-card { transition: transform .12s, border-color .12s, box-shadow .12s; }
+.sv-card.on-team { box-shadow: inset 3px 0 0 var(--accent-2), 0 0 0 1px rgba(111,177,201,.25); }
+.sv-card:hover { border-color: #3f4b5b; }
+.sv-stats span { transition: background .12s; }
+
+/* 지역/깊이 아이콘 */
+.region-opt .r-ico { font-size: 1.15rem; flex-shrink: 0; }
+.region-opt { transition: border-color .12s, background .12s, transform .12s; }
+.region-opt:hover { transform: translateX(2px); border-color: #3f4b5b; }
+.depth-opt .d-ico { display: block; font-size: 1rem; margin-bottom: 1px; }
+.depth-opt { transition: .12s; }
+
+/* 위협 예고에 아이콘 느낌 */
+.threat-fc .lvl { text-shadow: 0 0 12px currentColor; }
+.rep-threat-ico { font-size: 1.05rem; }
+
+/* 게이지 채워지는 애니메이션 강조 */
+.gauge-track i { background-image: linear-gradient(90deg, rgba(255,255,255,.18), transparent); }
+
+/* 모달 등장 */
+.modal.active .modal-box { animation: modalPop .25s cubic-bezier(.2,.9,.3,1.1); }
+@keyframes modalPop { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+
+/* 버튼 광택 */
+.btn-primary { box-shadow: 0 2px 10px rgba(224,164,88,.25); }
+.btn-run { box-shadow: 0 3px 14px rgba(224,164,88,.3); }
+
 /* 반응형 */
 @media (max-width: 920px) {
   .layout { grid-template-columns: 1fr; overflow-y: auto; }
@@ -247,4 +356,8 @@ button:active { transform: translateY(1px); }
   body { overflow: auto; }
   .screen.active { height: auto; min-height: 100vh; flex-direction: column; }
   #game-screen.active { display: flex; }
+  .tcard { min-height: 140px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; }
 }

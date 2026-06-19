@@ -309,3 +309,46 @@ export const TUNING = {
   farmFood: 0,              // 농장은 P1 (MVP 제외)
   purifierWater: 2,         // 정수 시설 물 생산/일
 };
+
+// ---------------------------------------------------------------------------
+// 시각 디자인용 아이콘 (외부 이미지 의존 없이 이모지/심볼 사용)
+// ---------------------------------------------------------------------------
+export const RESOURCE_ICON = {
+  food: "🍖", water: "💧", materials: "🪵", medicine: "💊",
+  parts: "⚙️", ammo: "🔫", morale: "🔥", intel: "📡",
+};
+export const ROLE_ICON = {
+  soldier: "🎖️", scout: "🧭", engineer: "🔧", medic: "⚕️", leader: "⭐", gatherer: "🎒",
+};
+export const STAT_ICON = {
+  hp: "❤️", mental: "🧠", strength: "💪", agility: "🏃", intelligence: "🔬", charisma: "🗣️",
+};
+export const REGION_ICON = {
+  suburb: "🏚️", market: "🏪", hospital: "🏥", checkpoint: "🪖", subway: "🚇",
+};
+export const FACILITY_ICON = {
+  quarters: "🛏️", storage: "📦", workshop: "🔧", infirmary: "⛑️",
+  purifier: "🚰", wall: "🧱", power: "⚡",
+};
+export const THREAT_ICON = {
+  raider: "⚔️", infected: "🧟", theft: "🦹", blackout: "🔌", storm: "⛈️",
+};
+export const DEPTH_ICON = {
+  safe: "🛡️", balanced: "⚖️", aggressive: "🔥", all_out: "💀",
+};
+// 타로 카드 시각 정보 (메이저 아르카나 번호 + 상징 이모지)
+export const TAROT_VIS = {
+  the_fool:        { numeral: "0",    symbol: "🎒" },
+  the_magician:    { numeral: "I",    symbol: "🪄" },
+  high_priestess:  { numeral: "II",   symbol: "🌙" },
+  the_empress:     { numeral: "III",  symbol: "🌾" },
+  the_emperor:     { numeral: "IV",   symbol: "🛡️" },
+  hierophant:      { numeral: "V",    symbol: "📿" },
+  the_chariot:     { numeral: "VII",  symbol: "🐎" },
+  justice:         { numeral: "XI",   symbol: "⚖️" },
+  the_hermit:      { numeral: "IX",   symbol: "🏮" },
+  wheel_of_fortune:{ numeral: "X",    symbol: "🎡" },
+  the_tower:       { numeral: "XVI",  symbol: "🗼" },
+  the_sun:         { numeral: "XIX",  symbol: "☀️" },
+};
+

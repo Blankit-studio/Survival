@@ -4,6 +4,8 @@
 // ============================================================================
 import {
   STAT_LABEL, RESOURCE_LABEL, ROLE_LABEL, TRAIT_LABEL, REGIONS, DEPTHS,
+  RESOURCE_ICON, ROLE_ICON, STAT_ICON, REGION_ICON, FACILITY_ICON,
+  THREAT_ICON, DEPTH_ICON, TAROT_VIS,
 } from "./data.js";
 import { previewExpedition, aliveSurvivors, convertCardForSurvivor } from "./engine.js";
 
@@ -14,6 +16,13 @@ let H = {}; // handlers
 export function bindHandlers(handlers) { H = handlers; }
 
 const LOW_RES = { food: 2, water: 2, medicine: 1, materials: 2 };
+
+// 생존자 id로 안정적인 아바타 색상(hue) 생성
+function avatarHue(id) {
+  let h = 0;
+  for (let i = 0; i < id.length; i++) h = (h * 31 + id.charCodeAt(i)) % 360;
+  return h;
+}
 
 // ---------------------------------------------------------------------------
 export function render(state) {
@@ -35,7 +44,8 @@ function renderResources(state) {
     const low = LOW_RES[k] != null && v <= LOW_RES[k];
     const chip = el("div", "res-chip" + (low ? " low" : ""));
     const display = k === "morale" ? Math.round(v) : v;
-    chip.innerHTML = `<span class="lbl">${label}</span><span class="val">${display}</span>`;
+    chip.innerHTML = `<span class="res-ico">${RESOURCE_ICON[k] || ""}</span><span class="lbl">${label}</span><span class="val">${display}</span>`;
+    chip.title = label;
     bar.appendChild(chip);
   }
 }
@@ -66,6 +76,7 @@ function renderFacilities(state) {
     const cls = d > 60 ? "hi" : d > 30 ? "mid" : "lo";
     const row = el("div", "fac-row");
     row.innerHTML = `
+      <span class="fac-ico">${FACILITY_ICON[k] || "▪"}</span>
       <span class="fac-name">${names[k]}</span>
       <div class="fac-bar"><i class="${cls}" style="width:${d}%"></i></div>
       <span class="fac-val">${d}%</span>`;
@@ -84,14 +95,19 @@ function renderTarot(state) {
   for (const card of state.cards) {
     const assignedTo = Object.entries(state.assignments).find(([cid]) => cid === card.id)?.[1];
     const sv = assignedTo ? state.survivors.find(s => s.id === assignedTo) : null;
+    const vis = TAROT_VIS[card.id] || { numeral: "", symbol: "✦" };
     const c = el("div", "tcard" + (sv ? " assigned" : ""));
     c.draggable = true;
     c.dataset.cardId = card.id;
     c.innerHTML = `
-      <span class="tc-name">${card.name}</span>
-      <span class="tc-kr">${card.korean} · ${card.desc}</span>
-      <div class="tc-tags">${card.tags.map(t => `<span class="tc-tag">${t}</span>`).join("")}</div>
-      ${sv ? `<span class="tc-assignee">▸ ${sv.name}</span>` : ""}`;
+      <div class="tc-frame">
+        <div class="tc-top"><span class="tc-num">${vis.numeral}</span><span class="tc-num">${vis.numeral}</span></div>
+        <div class="tc-symbol">${vis.symbol}</div>
+        <div class="tc-name">${card.name}</div>
+        <div class="tc-kr">${card.korean}</div>
+        <div class="tc-tags">${card.tags.map(t => `<span class="tc-tag">${t}</span>`).join("")}</div>
+        ${sv ? `<div class="tc-assignee">▸ ${sv.name}</div>` : `<div class="tc-desc">${card.desc}</div>`}
+      </div>`;
     c.addEventListener("dragstart", e => { e.dataTransfer.setData("text/card", card.id); c.classList.add("dragging"); });
     c.addEventListener("dragend", () => c.classList.remove("dragging"));
     // 클릭(모바일): 배정 선택 모드
@@ -116,15 +132,19 @@ function renderSurvivors(state) {
     card.dataset.svId = sv.id;
     const traits = sv.traits.map(t => TRAIT_LABEL[t] || t).join(", ");
     const statHtml = ["strength", "agility", "intelligence", "hp", "mental", "charisma"]
-      .map(k => `<span>${STAT_LABEL[k]} <b>${sv.stats[k]}</b></span>`).join("");
+      .map(k => `<span title="${STAT_LABEL[k]}">${STAT_ICON[k]} <b>${sv.stats[k]}</b></span>`).join("");
     const assigned = Object.entries(state.assignments).filter(([, id]) => id === sv.id).map(([cid]) => cid);
     const cardChips = assigned.map(cid => {
       const c = state.cards.find(x => x.id === cid);
       return c ? `<span class="mini-card" data-card="${cid}" title="배정 취소">${c.name} ✕</span>` : "";
     }).join("");
 
+    const hue = avatarHue(sv.id);
     card.innerHTML = `
       <div class="sv-head">
+        <span class="sv-avatar" style="background:hsl(${hue} 40% 30%);border-color:hsl(${hue} 50% 45%)">
+          ${sv.name.charAt(0)}<span class="sv-rolebadge">${ROLE_ICON[sv.role] || ""}</span>
+        </span>
         <span class="sv-name">${sv.name}</span>
         <span class="sv-role">${ROLE_LABEL[sv.role]}</span>
         <span class="sv-traits">${traits}</span>
@@ -179,7 +199,8 @@ function renderExpedition(state) {
   for (const r of REGIONS) {
     const dz = r.danger < 35 ? "dz-low" : r.danger < 60 ? "dz-mid" : "dz-hi";
     const opt = el("div", "region-opt" + (state.plan.regionId === r.id ? " sel" : ""));
-    opt.innerHTML = `<span class="r-name">${r.name}</span>
+    opt.innerHTML = `<span class="r-ico">${REGION_ICON[r.id] || "📍"}</span>
+      <span class="r-name">${r.name}</span>
       <span class="r-danger ${dz}">위험 ${r.danger}</span>
       <span class="r-desc">${r.desc}</span>`;
     opt.onclick = () => H.selectRegion(r.id);
@@ -194,7 +215,7 @@ function renderExpedition(state) {
   const depthRow = el("div", "depth-row");
   for (const d of DEPTHS) {
     const opt = el("div", "depth-opt" + (state.plan.depthId === d.id ? " sel" : ""));
-    opt.innerHTML = `${d.name}<small>×${d.lootMult}</small>`;
+    opt.innerHTML = `<span class="d-ico">${DEPTH_ICON[d.id] || ""}</span>${d.name}<small>×${d.lootMult}</small>`;
     opt.title = d.desc;
     opt.onclick = () => H.selectDepth(d.id);
     depthRow.appendChild(opt);
@@ -306,7 +327,8 @@ export function showReport(state, report) {
     const n = report.night;
     const sec = section("야간 방어");
     const tb = el("div", "rep-line");
-    tb.innerHTML = `${n.threat} <span class="tier-badge tier-${n.tier}">${tierLabel(n.tier)}</span>`;
+    const tIcon = report.night.icon || threatIconByName(n.threat);
+    tb.innerHTML = `<span class="rep-threat-ico">${tIcon}</span> ${n.threat} <span class="tier-badge tier-${n.tier}">${tierLabel(n.tier)}</span>`;
     sec.appendChild(tb);
     sec.appendChild(line(`방어력 ${n.defensePower} vs 위협력 ${n.threatPower} → 피해도 ${n.lossSeverity}`));
     for (const ef of n.effects) sec.appendChild(line(ef, ef.includes("사망") ? "danger" : ""));
@@ -325,6 +347,15 @@ export function showReport(state, report) {
 }
 
 function tierLabel(t) { return t === "minor" ? "경미" : t === "moderate" ? "중간 피해" : "심각"; }
+function threatIconByName(name) {
+  if (!name) return "🌙";
+  if (name.includes("레이더")) return THREAT_ICON.raider;
+  if (name.includes("감염")) return THREAT_ICON.infected;
+  if (name.includes("도난")) return THREAT_ICON.theft;
+  if (name.includes("정전")) return THREAT_ICON.blackout;
+  if (name.includes("폭풍")) return THREAT_ICON.storm;
+  return "🌙";
+}
 function section(title) { const s = el("div", "rep-section"); s.appendChild(el("h4", null, title)); return s; }
 function line(text, cls) { return el("div", "rep-line" + (cls ? " " + cls : ""), text); }
 
