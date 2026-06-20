@@ -360,3 +360,26 @@ export const TAROT_VIS = {
   the_sun:         { numeral: "XIX",  symbol: "☀️" },
 };
 
+// 브랜드 / 분위기 텍스트
+export const BRAND = { title: "AFTERFALL", tagline: "생존자들의 마지막 보루" };
+export const WEATHER = ["맑음", "흐림", "비", "안개", "흐림", "폭풍 전조"];
+
+// 지역 표시용 메타 (거점 거리 km, 권장 팀 레벨) — 표시 전용
+export const REGION_META = {
+  suburb:     { km: 1.2, recLevel: 1, minutes: 35 },
+  market:     { km: 2.0, recLevel: 1, minutes: 45 },
+  hospital:   { km: 2.6, recLevel: 2, minutes: 50 },
+  checkpoint: { km: 3.0, recLevel: 2, minutes: 60 },
+  subway:     { km: 3.2, recLevel: 3, minutes: 70 },
+};
+
+// 사이드바 내비게이션
+export const NAV = [
+  { id: "shelter", label: "쉘터", icon: "🏠" },
+  { id: "expedition", label: "탐사", icon: "🧭" },
+  { id: "defense", label: "방어", icon: "🛡️" },
+  { id: "survivors", label: "생존자", icon: "👥" },
+  { id: "tarot", label: "타로", icon: "🃏" },
+  { id: "records", label: "기록", icon: "📜" },
+];
+

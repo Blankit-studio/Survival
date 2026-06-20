@@ -2,16 +2,17 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0d1014" />
-  <title>아포칼립스 캠프 생존</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#15120d" />
+  <title>AFTERFALL — 생존자들의 마지막 보루</title>
   <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
   <!-- 타이틀 -->
   <section id="title-screen" class="screen active">
     <div class="title-box">
-      <h1>아포칼립스 캠프<br /><span>생존</span></h1>
+      <div class="title-brand">AFTERFALL</div>
+      <div class="title-tag">생존자들의 마지막 보루</div>
       <p class="tagline">탐사로 얻고, 파밍으로 욕심내고, 쉘터 방어로 대가를 치른다.</p>
       <div class="title-buttons">
         <button id="btn-new" class="btn-primary">새 게임</button>
@@ -22,52 +23,42 @@
     </div>
   </section>
 
-  <!-- 게임 화면 -->
-  <section id="game-screen" class="screen">
+  <!-- 게임 셸 -->
+  <div id="app" class="app">
+    <!-- 상단바 -->
     <header class="topbar">
-      <div class="day-info">
+      <div class="brand">
+        <div class="brand-title">AFTERFALL</div>
+        <div class="brand-tag">생존자들의 마지막 보루</div>
+      </div>
+      <div class="day-block">
         <span class="day-num" id="day-num">DAY 1</span>
-        <span class="phase-tag" id="phase-tag">배치 단계</span>
+        <span class="day-sub" id="day-sub">18:00 · 흐림</span>
       </div>
       <div class="resources" id="resource-bar"></div>
       <div class="topbar-actions">
         <div id="auth-chip" class="auth-chip"></div>
-        <button id="btn-records" class="btn-mini" title="내 기록">📜</button>
-        <button id="btn-save" class="btn-mini" title="저장">💾</button>
-        <button id="btn-menu" class="btn-mini" title="메뉴">≡</button>
+        <button id="btn-save" class="icon-btn" title="저장">💾</button>
+        <button id="btn-menu" class="icon-btn" title="메뉴">⚙</button>
       </div>
     </header>
 
-    <main class="layout">
-      <!-- 좌: 캠프 대시보드 -->
-      <div class="col col-left">
-        <div class="panel" id="panel-threat"></div>
-        <div class="panel" id="panel-facilities"></div>
-      </div>
+    <!-- 사이드바 -->
+    <aside class="sidebar">
+      <nav id="nav" class="nav"></nav>
+      <div class="sidebar-foot"><div class="watchtower">🗼</div></div>
+    </aside>
 
-      <!-- 중: 생존자 + 카드 배정 -->
-      <div class="col col-center">
-        <div class="panel" id="panel-tarot"></div>
-        <div class="panel" id="panel-survivors"></div>
-      </div>
-
-      <!-- 우: 탐사 준비 -->
-      <div class="col col-right">
-        <div class="panel" id="panel-expedition"></div>
-        <div class="panel" id="panel-history"></div>
-      </div>
+    <!-- 화면 -->
+    <main class="main">
+      <div id="view-root"></div>
     </main>
-
-    <footer class="actionbar">
-      <div class="action-hint" id="action-hint">카드를 생존자에게 배정하고 탐사팀을 편성하세요.</div>
-      <button id="btn-run" class="btn-primary btn-run">하루 실행 ▶</button>
-    </footer>
-  </section>
+  </div>
 
   <!-- 리포트 모달 -->
   <div id="report-modal" class="modal">
     <div class="modal-box report-box">
-      <h2 id="report-title">DAY 1 REPORT</h2>
+      <h2 id="report-title">DAY 1 야간 보고</h2>
       <div id="report-body"></div>
       <button id="btn-report-close" class="btn-primary">다음 날로 ▶</button>
     </div>
@@ -82,7 +73,7 @@
     </div>
   </div>
 
-  <!-- 기록 모달 -->
+  <!-- 기록 모달 (사용 안 함, 기록은 화면으로 대체) -->
   <div id="records-modal" class="modal">
     <div class="modal-box">
       <h2>📜 내 기록</h2>
