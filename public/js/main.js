@@ -126,6 +126,16 @@ bindHandlers({
     else toast("수리할 곳이 없거나 자재가 부족합니다.");
   },
   endDay() { doEndDay(); },
+  rerender() { rerender(); },
+  autoTeam() {
+    // 건강·피로 기준 상위 2명 자동 편성 (최소 1명은 방어에 남김)
+    const alive = aliveSurvivors(state);
+    const ranked = [...alive].sort((a, b) =>
+      (a.condition.injury + a.condition.fatigue) - (b.condition.injury + b.condition.fatigue));
+    state.plan.team = ranked.slice(0, Math.min(2, Math.max(1, alive.length - 1))).map(s => s.id);
+    rerender();
+    toast(`자동 편성: ${state.plan.team.length}명 (컨디션 우선)`);
+  },
   async signIn() {
     if (!cloudEnabled()) { toast("클라우드가 설정되지 않았습니다."); return; }
     try { await signInWithGoogle(); toast("로그인되었습니다."); }
@@ -165,6 +175,8 @@ document.getElementById("btn-continue").onclick = continueGame;
 document.getElementById("btn-report-close").onclick = nextDay;
 document.getElementById("btn-over-restart").onclick = () => { hideGameOver(); clearSave(); showScreen("title-screen"); updateContinueButton(); };
 document.getElementById("btn-save").onclick = () => { persist(true); toast("저장되었습니다."); };
+const bellBtn = document.getElementById("btn-bell");
+if (bellBtn) bellBtn.onclick = () => { if (state) { state._view = "shelter"; rerender(); toast("일일 로그를 확인하세요."); } };
 const recClose = document.getElementById("btn-records-close"); if (recClose) recClose.onclick = () => document.getElementById("records-modal").classList.remove("active");
 
 // 메뉴

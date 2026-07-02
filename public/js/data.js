@@ -383,3 +383,46 @@ export const NAV = [
   { id: "records", label: "기록", icon: "📜" },
 ];
 
+// ---------------------------------------------------------------------------
+// 지역 노드맵 좌표(%)와 경로 (탐사 화면 지도)
+// ---------------------------------------------------------------------------
+export const REGION_POS = {
+  suburb:     { x: 16, y: 24 },
+  market:     { x: 46, y: 14 },
+  hospital:   { x: 80, y: 22 },
+  checkpoint: { x: 30, y: 74 },
+  subway:     { x: 74, y: 66 },
+};
+export const REGION_ROUTES = [
+  ["suburb", "market", 25], ["market", "hospital", 30],
+  ["suburb", "checkpoint", 15], ["market", "subway", 20],
+  ["checkpoint", "subway", 25], ["market", "checkpoint", 20],
+];
+
+// 방어 배치도 마커 (시설 내구도와 연동)
+export const DEFENSE_MAP_MARKERS = [
+  { id: "tower_n", icon: "🗼", name: "감시탑 북쪽", x: 18, y: 10, kind: "guard" },
+  { id: "wall_a", icon: "🧱", name: "외벽 구간 A", x: 50, y: 7, kind: "wall" },
+  { id: "tower_e", icon: "🗼", name: "감시탑 동쪽", x: 82, y: 12, kind: "guard" },
+  { id: "traps", icon: "🪤", name: "함정 지대", x: 9, y: 45, kind: "workshop" },
+  { id: "gen", icon: "⚡", name: "발전기", x: 47, y: 42, kind: "power" },
+  { id: "storage", icon: "📦", name: "주 비상 저장소", x: 78, y: 40, kind: "storage" },
+  { id: "wall_b", icon: "🧱", name: "외벽 구간 B", x: 11, y: 82, kind: "wall2" },
+  { id: "gate", icon: "🚪", name: "주 출입구", x: 47, y: 76, kind: "gate" },
+  { id: "med", icon: "⛑️", name: "의무실 백업", x: 76, y: 74, kind: "infirmary" },
+  { id: "barricade", icon: "🚧", name: "바리케이드 라인", x: 48, y: 93, kind: "barricade" },
+];
+
+// 장비 슬롯 (탐사 준비 표시용)
+export const EQUIP_SLOTS = [
+  { icon: "🏏", name: "근접 무기" },
+  { icon: "🔫", name: "화기", res: "ammo" },
+  { icon: "🎒", name: "배낭", team: true },
+  { icon: "⛑️", name: "의료 키트", res: "medicine" },
+  { icon: "🛠️", name: "도구", res: "parts" },
+  { icon: "🔦", name: "손전등", power: true },
+];
+
+// 쉘터 방 그리드 (시설 → 방 카드)
+export const ROOM_ORDER = ["storage", "workshop", "infirmary", "purifier", "quarters", "power", "wall"];
+

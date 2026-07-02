@@ -41,7 +41,10 @@ ok($$(".tcard").length === 3, `타로 카드 3장 (${$$(".tcard").length})`);
 
 // 3) 탐사 화면 → 팀 편성 + 지역/깊이 + 카드
 nav("탐사");
-ok($(".region-grid") !== null, "탐사 화면: 지역 지도 렌더");
+ok($(".node-map") !== null, "탐사 화면: 지역 노드맵 렌더");
+ok($$(".region-card").length === 5, `지역 노드 5개 (${$$(".region-card").length})`);
+ok($(".route-svg") !== null, "경로 연결선(SVG) 렌더");
+ok($(".equip-row") !== null, "장비 슬롯 렌더");
 const teamBtns = $$(".team-btn");
 ok(teamBtns.length === 3, `팀 토글 버튼 3개 (${teamBtns.length})`);
 click(teamBtns[0]); click(teamBtns[1]);
